@@ -710,8 +710,8 @@ class Not(BooleanFunction):
         from sympy import (
             Equality, GreaterThan, LessThan,
             StrictGreaterThan, StrictLessThan, Unequality)
-        if isinstance(arg, Number) or arg in (True, False):
-            return false if arg else true
+        # if isinstance(arg, Number) or arg in (True, False):
+        #     return false if arg else true
         # if arg.is_Not:
         #     return arg.args[0]
         # Simplify Relational objects.
