@@ -520,15 +520,6 @@ class BooleanFunction(Application, Boolean):
 class BoolAssocOp(AssocOp):
     def _has_matcher(self):
         """Helper for .has()"""
-        def _ncsplit(expr):
-            # this is not the same as args_cnc because here
-            # we don't assume expr is a Mul -- hence deal with args --
-            # and always return a set.
-            cpart, ncpart = sift(expr.args,
-                lambda arg: arg.is_commutative is True, binary=True)
-            return set(cpart), ncpart
-
-        c, nc = _ncsplit(self)
         cls = self.__class__
 
         def is_in(expr):
@@ -537,14 +528,13 @@ class BoolAssocOp(AssocOp):
             elif not isinstance(expr, Basic):
                 return False
             elif isinstance(expr, cls):
-                _c, _nc = _ncsplit(expr)
-                if (c & _c) == c:
-                    if not nc:
+                from itertools import permutations
+                _permutations = permutations(expr.args, len(self.args))
+                for _permutation in _permutations:
+                    new_expr = cls(*_permutation)
+                    if new_expr == self:
                         return True
-                    elif len(nc) <= len(_nc):
-                        set_nc = frozenset(nc)
-                        if frozenset(_nc).intersection(set_nc) == set_nc:
-                            return True
+
             return False
         return is_in
 
